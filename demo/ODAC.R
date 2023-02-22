@@ -1,7 +1,7 @@
 require(survival)
 require(data.table)
 require(pda)
-data(lung)
+# data(lung)
 
 ## In the toy example below we aim to analyze the association of lung status with age and sex using Cox regression,
 ## data(lung) from 'survival', we randomly assign to 3 sites: 'site1', 'site2', 'site3'
@@ -10,17 +10,15 @@ data(lung)
 ## will be assigned to the sites at the server https://pda.one.
 ## Each site can access via web browser to check the communication of the summary stats.
 
-# Create 3 sites, split the lung data amongst them
-sites = c('site1', 'site2', 'site3')
-set.seed(42)
-lung2 <- lung[,c('time', 'status', 'age', 'sex')]
-lung2$sex <- lung2$sex - 1
-lung2$status <- ifelse(lung2$status == 2, 1, 0)
-lung_split <- split(lung2, sample(1:length(sites), nrow(lung), replace=TRUE))
-## fit logistic reg using pooled data
+# load('pda/data/lung2.rda')
+data(lung2) 
+lung_split <- split(lung2, lung2$site) 
+
+
+## fit Cox PH reg using pooled data
 fit.pool <- coxph(Surv(time, status) ~ age + sex, data = lung2)
 
-
+sites = c('site1', 'site2', 'site3')
 S=readline(prompt="Type  <Return>   to continue : ")
 # ############################  STEP 1: initialize  ###############################
 control <- list(project_name = 'Lung cancer study',
@@ -31,6 +29,7 @@ control <- list(project_name = 'Lung cancer study',
                 family = 'cox',
                 outcome = "Surv(time, status)",
                 variables = c('age', 'sex'),
+                # xlev = list(sex=c('F', 'M')),  #levels of all categorical X's, with the first being the reference
                 optim_maxit = 100,
                 lead_site = 'site1',
                 upload_date = as.character(Sys.time()) )

@@ -4,7 +4,7 @@
 \alias{pda}
 \title{PDA: Privacy-preserving Distributed Algorithm}
 \usage{
-pda(ipdata,site_id,control,dir,uri,secret)
+pda(ipdata,site_id,control,dir,uri,secret,hosdata)
 }
 \arguments{
 \item{ipdata}{Local IPD data in data frame, should include at least one column for the outcome and one column for the covariates}
@@ -18,6 +18,8 @@ pda(ipdata,site_id,control,dir,uri,secret)
 \item{uri}{Universal Resource Identifier for this run}
 
 \item{secret}{password to authenticate as site_id on uri}
+
+\item{hosdata}{hospital-level data, should include the same name as defined in the control file}
 }
 \value{
 control
@@ -128,14 +130,27 @@ cbind(b.pool=fit.pool$coef,
 \references{
 Michael I. Jordan, Jason D. Lee & Yun Yang (2019) Communication-Efficient Distributed Statistical Inference, \cr
  \emph{Journal of the American Statistical Association}, 114:526, 668-681 \cr 
- \url{https://doi.org/10.1080/01621459.2018.1429274}.\cr 
+ \doi{10.1080/01621459.2018.1429274}.\cr 
+(DLM) Yixin Chen, et al. (2006) Regression cubes with lossless compression and aggregation. 
+   IEEE Transactions on Knowledge and Data Engineering, 18(12), pp.1585-1599. \cr
+(DLMM) Chongliang Luo, et al. (2020) Lossless Distributed Linear Mixed Model with Application to Integration of Heterogeneous Healthcare Data.  
+   medRxiv, \doi{10.1101/2020.11.16.20230730}. \cr
+(DPQL) Chongliang Luo, et al. (2021) dPQL: a lossless distributed algorithm for generalized linear mixed model with application to privacy-preserving hospital profiling. \cr
+   medRxiv, \doi{10.1101/2021.05.03.21256561}. \cr
 (ODAL) Rui Duan, et al. (2020) Learning from electronic health records across multiple sites: \cr 
  A communication-efficient and privacy-preserving distributed algorithm. \cr 
  \emph{Journal of the American Medical Informatics Association}, 27.3:376–385,
- \cr \url{https://doi.org/10.1093/jamia/ocz199}.\cr 
+ \cr \doi{10.1093/jamia/ocz199}.\cr 
 (ODAC) Rui Duan, et al. (2020) Learning from local to global: An efficient distributed algorithm for modeling time-to-event data. \cr
   \emph{Journal of the American Medical Informatics Association}, 27.7:1028–1036, \cr 
-   \url{https://doi.org/10.1093/jamia/ocaa044}.
+   \doi{10.1093/jamia/ocaa044}. \cr
+(ODACH) Chongliang Luo, et al. (2021) ODACH: A One-shot Distributed Algorithm for Cox model with Heterogeneous Multi-center Data. \cr
+      \emph{medRxiv}, \doi{10.1101/2021.04.18.21255694}. \cr 
+(ODAH) Mackenzie J. Edmondson, et al. (2021) An Efficient and Accurate Distributed Learning Algorithm for Modeling Multi-Site Zero-Inflated Count Outcomes. 
+   medRxiv, pp.2020-12. \cr
+   \doi{10.1101/2020.12.17.20248194}. \cr
+(ADAP) Xiaokang Liu, et al. (2021) ADAP: multisite learning with high-dimensional heterogeneous data via A Distributed Algorithm for Penalized regression. \cr
+(dGEM) Jiayi Tong, et al. (2022) dGEM: Decentralized Generalized Linear Mixed Effects Model \cr
 }
 \seealso{
 \code{pdaPut}, \code{pdaList}, \code{pdaGet}, \code{getCloudConfig} and \code{pdaSync}.
