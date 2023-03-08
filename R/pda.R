@@ -175,7 +175,7 @@ getCloudConfig <- function(site_id,dir=NULL,uri=NULL,secret=NULL){
 #' @param hosdata hospital-level data, should include the same name as defined in the control file
 #' @return control
 #' @seealso \code{pdaPut}, \code{pdaList}, \code{pdaGet}, \code{getCloudConfig} and \code{pdaSync}.
-#' @import stats survival rvest jsonlite data.table httr Rcpp metafor MASS
+#' @import stats survival rvest jsonlite data.table httr Rcpp metafor
 #'          
 #' @references
 #' Michael I. Jordan, Jason D. Lee & Yun Yang (2019) Communication-Efficient Distributed Statistical Inference, \cr
@@ -339,9 +339,15 @@ pda <- function(ipdata=NULL,site_id,control=NULL,dir=NULL,uri=NULL,secret=NULL,h
       ODAC.steps<-c('initialize','derive', 'estimate','synthesize')
     }
     ODAC.family<-'cox'
-  }else if(control$model=='ODACAT'){  # multi-category  
-    ODACAT.steps <- c('initialize','derive','estimate')
+  }else if(control$model=='ODACAT'){  # multi-category; added by Jessie & Ken on Feb 24, 2023
+    ODACAT.steps <- c('initialize','derive','estimate','synthesize')
     ODACAT.family <- 'multicategory'
+  }else if(control$model=='ODACATH'){ # added by Jessie & Ken on Feb 24, 2023
+    ODACATH.steps <- c('initialize','derive','estimate','synthesize')
+    ODACATH.family <- 'multicategory'
+    if(control$heterogeneity==T){
+      message("You specified control$heterogeneity = T, so you are using the hetero-version of ODACAT.")
+    }
   }else if(control$model=='DLM'){
     DLM.steps<-c('initialize', 'estimate')
     DLM.family<-'gaussian'
@@ -449,7 +455,11 @@ pda <- function(ipdata=NULL,site_id,control=NULL,dir=NULL,uri=NULL,secret=NULL,h
     control$risk_factor = colnames(ipdata)[-c(1:2)]
   }else if(control$model=='ODACAT'){
     ipdata = data.table::data.table(outcome=as.numeric(model.response(mf)),  ## multi-category y is 1:q
-                                    model.matrix(formula, mf))
+                                    model.matrix(formula, mf))[,-2] # remove the intercept column. ODACAT does not need that column.
+    control$risk_factor = colnames(ipdata)[-1]
+  }else if(control$model=='ODACATH'){ # added by Jessie & Ken on Feb 24, 2023
+    ipdata = data.table::data.table(outcome=as.numeric(model.response(mf)),  ## multi-category y is 1:q
+                                    model.matrix(formula, mf))[,-2] # remove the intercept column. ODACATH does not need that column. 
     control$risk_factor = colnames(ipdata)[-1]
   }else if(control$model=='DLM'){
     ipdata = data.table::data.table(outcome=as.numeric(model.response(mf)), 
@@ -491,8 +501,12 @@ pda <- function(ipdata=NULL,site_id,control=NULL,dir=NULL,uri=NULL,secret=NULL,h
         }
       }
     }else{
+      # print(control)
       step_obj <- get(step_function)(ipdata, control, config)
+      # print(step_function)
     }
+    
+    
     if(control$step=='estimate'){
       if(control$model=='DLM'){
         message("Congratulations, the PDA is completed! The result is guaranteed to be identical to the pooled analysis")
@@ -564,8 +578,11 @@ pdaSync <- function(config){
     }
     ODAC.family<-'cox'
   } else if(control$model=='ODACAT'){
-    ODACAT.steps<-c('initialize','derive','estimate')
+    ODACAT.steps<-c('initialize','derive','estimate','synthesize')
     ODACAT.family<-'multicategory'
+  } else if(control$model=='ODACATH'){ # added by Jessie & Ken on Feb 24, 2023
+    ODACATH.steps<-c('initialize','derive','estimate','synthesize')
+    ODACATH.family<-'multicategory'
   } else if(control$model=='DLM'){
     DLM.steps<-c('initialize','estimate')
     DLM.family<-'gaussian'
@@ -632,17 +649,24 @@ pdaSync <- function(config){
         if(control$lead_site %in% control$sites){
           bhat <-init_i$bhat_i 
           vbhat <- init_i$Vhat_i
+          if(control$model == "ODACATH"){
+            bhat_eta = init_i$bhat_eta_i
+          }
           for(site_i in control$sites){
             if(site_i!=control$lead_site){
               init_i <- pdaGet(paste0(site_i,'_initialize'),config)
               bhat = rbind(bhat, init_i$bhat_i)
               vbhat = rbind(vbhat, init_i$Vhat_i)
+              if (control$model == "ODACATH"){
+                bhat_eta = rbind(bhat_eta, init_i$bhat_eta_i)
+              }
             }
           }
         }else{
           init_i = pdaGet(paste0(control$sites[1],'_initialize'),config)
           bhat <-init_i$bhat_i 
           vbhat <- init_i$Vhat_i
+          
           for(site_i in control$sites[-1]){
               init_i <- pdaGet(paste0(site_i,'_initialize'),config)
               bhat = rbind(bhat, init_i$bhat_i)
@@ -656,6 +680,10 @@ pdaSync <- function(config){
         message('meta analysis (inverse variance weighted average) result:')
         #print(res)
         control$beta_init = bmeta
+        if (control$model == "ODACATH"){
+          control$bhat_eta = bhat_eta
+        }
+        
       }
       mes <- 'beta_init added, step=2 (derivatives)! \n'
     }
