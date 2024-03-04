@@ -1,8 +1,8 @@
 Package: pda
 Type: Package
 Title: Privacy-Preserving Distributed Algorithms
-Version: 1.2.6
-Date: 2023-03-06
+Version: 1.2.7
+Date: 2024-03-04
 Authors@R: c(person("Chongliang", "Luo", role="aut", email ="luocl3009@gmail.com"),
                 person("Rui", "Duan", role="aut"), person("Mackenzie", "Edmondson", role="aut"),
                 person("Jiayi", "Tong", role="aut"), person("Xiaokang", "Liu", role="aut"),
@@ -18,11 +18,11 @@ Depends: R (>= 4.1.0)
 Imports: Rcpp (>= 0.12.19), stats, httr, rvest, jsonlite, data.table,
         survival, minqa, glmnet, MASS, numDeriv, metafor, ordinal, plyr
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 LazyData: true
 NeedsCompilation: yes
-Packaged: 2023-03-08 15:40:41 UTC; thech
+Packaged: 2024-03-04 17:11:59 UTC; thech
 Author: Chongliang Luo [aut],
   Rui Duan [aut],
   Mackenzie Edmondson [aut],
@@ -33,4 +33,4 @@ Author: Chongliang Luo [aut],
   Yong Chen [aut],
   Penn Computing Inference Learning (PennCIL) lab [cph]
 Repository: CRAN
-Date/Publication: 2023-03-08 16:00:02 UTC
+Date/Publication: 2024-03-04 17:30:02 UTC

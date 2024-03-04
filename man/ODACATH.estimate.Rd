@@ -4,7 +4,7 @@
 \alias{ODACATH.estimate}
 \title{PDA surrogate estimation}
 \usage{
-ODACAT.estimate(ipdata,control,config)
+ODACATH.estimate(ipdata,control,config)
 }
 \arguments{
 \item{ipdata}{local data in data frame}

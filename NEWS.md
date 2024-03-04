@@ -16,3 +16,10 @@
 - Fix the bugs in ODACAT model.
 - Add new model ODACATH.
 
+## version 1.2.7
+
+---
+
+### Updates
+
+- Fix the alias bug in ODACATH model.
