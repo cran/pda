@@ -1,3 +1,11 @@
+## version 1.2.8
+
+---
+
+### Updates
+
+- Update package maintainer information.
+
 ## pda vesrion 1.2.5
 
 ---
